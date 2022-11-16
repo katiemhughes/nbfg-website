@@ -3,11 +3,39 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ApolloClient, ApolloProvider, InMemoryCache, gql } from '@apollo/client';
+
+const client = new ApolloClient({
+  uri: 'https://api-eu-west-2.hygraph.com/v2/clajp8fgl32dy01uj7kmvav5t/master',
+  cache: new InMemoryCache(),
+});
+
+client.query({
+  query: gql `
+    query GetPosts {
+      posts {
+        id,
+        datePublished,
+        slug,
+        content {
+            html
+        }
+        author {
+            name,
+            avatar {
+                url
+            }
+        }
+      }
+    }`,
+}).then((result) => console.log(result));
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
   </React.StrictMode>
 );
 
